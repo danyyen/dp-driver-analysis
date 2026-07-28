@@ -1,7 +1,7 @@
-# Exclude the slide results folder
+# Exclude folder
 slide results/
 
-# Exclude specific files
+# Exclude specific files (add extensions like .pdf or .docx if applicable)
 project enwave
 case study
 Operations Analyst Case Study roadmap
