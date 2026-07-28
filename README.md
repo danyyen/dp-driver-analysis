@@ -1,7 +1,9 @@
 # Operational Analytics: Differential Pressure Investigation in a District Cooling Network
 
 Operational analytics case study using Python, statistical modeling, explainable AI (SHAP), and Power BI to identify the operational drivers of customer differential pressure (DP) and support data-driven decision-making.
-!(images/dashboard.jpg)
+
+![DP Driver Dashboard](result_images/dashboard.jpg)
+
 
 ## Project Overview
 
@@ -99,6 +101,7 @@ The project followed a structured analytics workflow:
 - Time-series feature engineering
 - Exploratory data analysis
 - Correlation analysis
+  ![DP Driver Dashboard](result_images/correlation matr.jpg)
 - Multiple linear regression
 - Interaction effect modeling
 - Regression diagnostics
