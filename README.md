@@ -1,4 +1,4 @@
-# Operational Analytics: Customer Differential Pressure Investigation
+# Differential Pressure Investigation
 This repository contains an end-to-end operational analytics project investigating the factors that influence customer differential pressure (DP) within a district cooling network. Using operational telemetry and weather data, the project applies statistical modelling, explainable AI, and business intelligence techniques to identify key operational drivers of DP variability and translate analytical findings into actionable operational recommendations.
 
 ## Business Problem
