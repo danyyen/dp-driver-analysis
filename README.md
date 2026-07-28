@@ -101,8 +101,9 @@ The project followed a structured analytics workflow:
 - Time-series feature engineering
 - Exploratory data analysis
 - Correlation analysis
-  ![DP Driver Dashboard](result_images/correlation matr.jpg)
+![Correlation Matrix](result_images/correlation%20matr.png)
 - Multiple linear regression
+![Correlation Matrix](result_images/factors%20for%20DP.png)
 - Interaction effect modeling
 - Regression diagnostics
 - SHAP explainability
