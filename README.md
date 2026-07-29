@@ -2,8 +2,6 @@
 
 Operational analytics case study using Python, statistical modeling, explainable AI (SHAP), and Power BI to identify the operational drivers of customer differential pressure (DP) and support data-driven decision-making.
 
-![DP Driver Dashboard](result_images/dashboard.jpg)
-
 
 ## Project Overview
 
@@ -102,11 +100,15 @@ The project followed a structured analytics workflow:
 - Exploratory data analysis
 - Correlation analysis
 ![Correlation Matrix](result_images/correlation%20matr.png)
+
 - Multiple linear regression
 ![Correlation Matrix](result_images/factors%20for%20DP.png)
+
 - Interaction effect modeling
 - Regression diagnostics
 - SHAP explainability
+![DP Driver Dashboard](result_images/shap%20confirmation.png)
+
 - Executive dashboard development
 
 ---
@@ -128,6 +130,9 @@ Higher Humidex increased cooling demand and was associated with lower customer D
 ### 3. Peak demand creates elevated operational risk.
 
 Most DP upsets occurred during afternoon peak hours, indicating opportunities for proactive operational intervention.
+
+![DP Driver Dashboard](result_images/dp%20frequency%20and%20cooling%20demand%20by%20hour.png)
+
 
 ---
 
@@ -155,6 +160,8 @@ The accompanying Power BI dashboard provides operational visibility through:
 - Plant loading comparison
 - DP status distribution
 - Executive operational KPIs
+
+![DP Driver Dashboard](result_images/dashboard.jpg)
 
 ---
 
