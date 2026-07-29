@@ -35,8 +35,8 @@ The objective was to answer five key business questions:
 - Designed an executive Power BI Operations Command Center dashboard
 - Delivered actionable operational recommendations supported by statistical evidence
 
-#### All project results can be accessed on through this link  [View all result images](./result_images/)
 
+📸 **Project Gallery:** [View all visualizations](./result_images/)
 ---
 
 ## Project Workflow
@@ -55,7 +55,7 @@ flowchart TD
 
 ---
 
-## Technology Stack
+## Tools & Technology
 
 | Category | Tools |
 |----------|------|
@@ -100,15 +100,18 @@ The project followed a structured analytics workflow:
 - Data cleaning and quality validation
 - Time-series feature engineering
 - Exploratory data analysis
-- Correlation analysis
+- Correlation analysis:
+A correlation matrix was generated to understand the relationships between operational variables and customer differential pressure before statistical modelling.
 ![Correlation Matrix](result_images/correlation%20matr.png)
 
-- Multiple linear regression
+- Multiple linear regression:
+Multiple linear regression quantified the independent contribution of each operational variable while controlling for confounding effects.
 ![Correlation Matrix](result_images/factors%20for%20DP.png)
 
 - Interaction effect modeling
 - Regression diagnostics
-- SHAP explainability
+- SHAP explainability:
+SHAP values were used to validate feature importance and improve model interpretability.
 ![DP Driver Dashboard](result_images/shap%20confirmation.png)
 
 - Executive dashboard development
@@ -181,13 +184,14 @@ Based on the analytical findings, the following operational improvements were pr
 
 ## Business Value
 
-Although completed as an analytics case study, the methodology demonstrates how advanced analytics can support operational excellence by enabling:
-
-- Improved service reliability
-- Reduced differential pressure upsets
-- Faster operational decision-making
-- Greater visibility into plant performance
-- Data-driven operational planning
+## Business Value
+This project demonstrates how statistical modeling and business intelligence can be applied to improve operational decision-making in utility operations.
+The analytical framework can help organizations:
+- Improve service reliability
+- Reduce customer DP upsets
+- Support proactive operational planning
+- Increase visibility into plant performance
+- Enable data-driven operational decisions
 
 ---
 
@@ -200,9 +204,15 @@ While the raw correlation suggested a negative relationship with customer DP, th
 This reinforced an important analytical principle: **relationships observed in isolation can be misleading when confounding variables are present.**
 
 ---
-
+## Challenges
+Several analytical challenges were addressed during this project:
+- Integrating operational telemetry with weather observations
+- Modeling autocorrelated time-series data
+- Explaining sign reversal caused by confounding variables
+- Balancing statistical rigour with business interpretability
+- Translating technical findings into executive recommendations
+  
 ## Skills Demonstrated
-
 - Operational Analytics
 - Statistical Modeling
 - Regression Analysis
