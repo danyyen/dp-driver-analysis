@@ -35,6 +35,8 @@ The objective was to answer five key business questions:
 - Designed an executive Power BI Operations Command Center dashboard
 - Delivered actionable operational recommendations supported by statistical evidence
 
+#### All project results can be accessed on through this link  [View all result images](./result_images/)
+
 ---
 
 ## Project Workflow
