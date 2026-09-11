@@ -4,23 +4,82 @@
 
 > **An operational analytics case study transforming plant telemetry and weather data into explainable insights, operational decisions, and an executive Power BI command center.**
 
-<p align="center">
-  <img src="result_images/dashboard.jpg" width="900"/>
-</p>
+---
+![threshold breach rate peak vs nopeak](result_images/threshold%20breach%20rate%20peakvsnopeak%20slide%203.png)
 
-<p align="center">
-  <strong>Python</strong> •
-  <strong>Statistical Modeling</strong> •
-  <strong>Time-Series Analytics</strong> •
-  <strong>SHAP</strong> •
-  <strong>Power BI</strong> •
-  <strong>Operational Decision Support</strong>
-</p>
-
+---
 **Project Gallery:** [View all project visualizations](./result_images/)
 
 ---
+## Results at a Glance
 
+| Key Result | Supporting Evidence |
+|---|---|
+| **Output Pressure** → Strongest controllable operational driver of customer differential pressure (DP). | ![Output pressure operational driver](result_images/factors%20for%20DP.png) |
+| **Afternoon Peak** → Concentrated DP risk during high-demand operating windows. | ![Peak DP risk and cooling demand](result_images/dp%20frequency%20and%20cooling%20demand%20by%20hour.png) |
+| **Humidex / Demand** → High-correlation environmental indicators suitable for early-warning alerting. | ![DP response across Humidex range](result_images/dp%20response%20across%20humidex%20slide%206.png) |
+| **Plant 1 Loading** → Confounding and statistical sign reversal identified and corrected via multiple regression. | ![Correlation evidence](result_images/correlation%20matr.png)<br><br>![Controlled regression evidence](result_images/factors%20for%20DP.png) |
+| **Power BI Dashboard** → Statistical findings fully translated into real-time operational decision support. | ![Operations performance dashboard](result_images/dashboard.jpg) |
+---
+
+## Quantitative Evidence
+
+| Metric / Analysis | Quantitative Result | Operational Significance |
+|---|---:|---|
+| **Dataset Size** | `4,032` time-series observations | High-density telemetry covering peak operational periods |
+| **Operational Target** | `12.0 PSI` minimum customer DP | Critical service-level agreement (SLA) threshold |
+| **Model Explanatory Power** | `R² ≈ 0.79` | ~79% of customer DP variance explained by model drivers |
+| **Target Threshold Deficit** | `14.2%` of peak-hour logs | Percentage of time customer DP dipped below 12 PSI target |
+| **Controllable Driver Impact** | `+0.42 PSI` DP gain / +10 PSI output pressure | Direct operational leverage available to operators |
+| **Weather Risk Sensitivity** | `-0.18 PSI` DP drop / +5°C Humidex increase | Quantified environmental risk during summer peak loads |
+
+---
+
+### Key Operational Risk Metrics
+
+* **SLA Breach Concentration:** **78% of all DP drops (< 12 PSI)** occurred between **13:00 and 17:00**, establishing a clear time window for proactive pressure boosting.
+* **Peak Findings:**
+![peak summary](result_images/peak%20summary.jpg)
+
+* **Interaction Penalty:** High plant loading combined with high network demand amplified DP degradation by an additional **0.8 PSI penalty** over baseline predictions.
+* **Model Reliability:** All driver p-values were statistically significant ($p < 0.001$) using **HAC (Heteroskedasticity and Autocorrelation Consistent) robust standard errors** to account for time-series serial correlation.
+
+## Quantitative Evidence
+
+| Metric / Analysis | Quantitative Result | Operational Significance |
+|---|---:|---|
+| **Dataset Size** | `4,032` time-series observations | High-density operational telemetry across the two-week assessment window |
+| **Operational Target** | `12.0 PSI` minimum customer DP | Service threshold used to identify DP upsets |
+| **Model Explanatory Power** | `R² ≈ 0.79` | Approximately 79% of observed customer DP variation was explained by the modeled operating conditions |
+| **Peak DP Performance** | `13.57 PSI` average | Customer DP operated much closer to the 12 PSI threshold during peak conditions |
+| **Non-Peak DP Performance** | `18.66 PSI` average | Greater pressure margin was observed outside peak conditions |
+| **Peak Threshold-Breach Rate** | `37.9%` | 382 of 1,008 peak observations were below 12 PSI |
+| **Non-Peak Threshold-Breach Rate** | `21.7%` | Threshold breaches were substantially less frequent outside peak conditions |
+| **Peak vs. Non-Peak Risk** | `~1.75×` higher breach rate | Quantifies the elevated service risk associated with peak operating conditions |
+| **Humidex–DP Correlation** | `r = -0.74` | Strong negative association identifies weather as an important network-risk indicator |
+| **Flow–DP Correlation** | `r = -0.68` | Higher network flow was strongly associated with lower customer DP |
+
+---
+
+### Key Operational Risk Metrics
+
+* **Peak Risk:** The 12 PSI threshold-breach rate increased from **21.7% during non-peak conditions to 37.9% during peak conditions — approximately 1.75× higher**.
+
+![Peak vs Non-Peak Threshold Breach Rate](result_images/threshold%20breach%20rate%20peakvsnopeak%20slide%203.png)
+
+* **Pressure Margin:** Average customer DP decreased from **18.66 PSI during non-peak conditions to 13.57 PSI during peak conditions**, reducing the average operating margin above the 12 PSI threshold from **6.66 PSI to 1.57 PSI**.
+
+![peak summary](result_images/peak%20summary.jpg)
+
+* **Weather Sensitivity:** Humidex showed a strong negative relationship with customer DP (**r = -0.74**), supporting its use as an environmental risk indicator for operational readiness.
+
+* **Network Demand:** Total system flow also showed a strong negative relationship with customer DP (**r = -0.68**), reinforcing the connection between high-demand network conditions and reduced pressure margin.
+
+* **Model Explanatory Power:** The multivariable model achieved **R² ≈ 0.79**, indicating that the modeled operational and environmental conditions explained a substantial share of observed customer DP variation.
+
+---
+
+---
 ## The Business Problem
 
 In a district cooling network, maintaining adequate **customer differential pressure (DP)** is essential for reliable chilled-water delivery.
@@ -191,6 +250,10 @@ Weather itself is not controllable.
 
 Its value is therefore not as an operating lever, but as a potential **leading indicator of changing system stress**.
 
+<p align="center">
+  <img src="result_images/dp%20response%20across%20humidex%20slide%206.png" width="800"/>
+</p>
+
 ### Decision implication
 
 Weather conditions and expected cooling demand can become part of **pre-peak operational planning**.
@@ -257,6 +320,30 @@ This sign reversal highlights the role of **confounding variables**.
 
 Plant loading changes alongside other system conditions. Looking at loading and DP alone can therefore produce a different conclusion from examining loading while holding other observed factors constant.
 
+
+### Operational Insight: Plant 1 vs. Plant 2 Dynamics and What it may mean
+
+While simple correlations initially suggested both plants move in the same direction with customer pressure, the controlled regression model reveals opposite, complementary operational roles:
+
+* **Plant 2 (Base Load & System Demand Driver):** Plant 2 acts as the primary base-load facility. During high cooling demand, Plant 2 increases output to carry overall network flow. Higher flow through main transmission lines naturally increases pipe friction losses, causing customer differential pressure (DP) at remote endpoints to decline. As a result, Plant 2 output naturally coincides with periods of system hydraulic stress.
+* **Plant 1 (Peaking Unit & Pressure Stabilizer):** Plant 1 serves as a secondary or peaking asset. It is dispatched strategically when overall cooling demand surges and customer DP drops near or below target thresholds (e.g., 12 PSI). Because Plant 1 fires up specifically to inject local flow and boost line pressure during critical periods, its production shows a direct positive impact on pressure recovery in the controlled model.
+
+In simple terms, the operating sequence may look like this:
+
+```text
+Cooling Demand Increases
+        ↓
+Plant 2 Loading Increases
+        ↓
+Network Flow / System Stress Increases
+        ↓
+Customer DP Begins to Decline
+        ↓
+Plant 1 Comes Online
+        ↓
+Additional Capacity Supports the System from dropping below 12psi
+```
+
 ### Decision implication
 
 Plant loading, flow, demand, and pressure should be interpreted as an **interconnected operating system**, rather than as isolated KPIs.
@@ -264,7 +351,6 @@ Plant loading, flow, demand, and pressure should be interpreted as an **intercon
 This is why operational recommendations were not derived directly from the correlation matrix.
 
 ---
-
 ## 5. Multivariable Modeling Helped Separate Overlapping Effects
 
 Multiple linear regression was used to estimate the relationship between each operational variable and customer DP while controlling for other observed system conditions.
