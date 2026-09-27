@@ -1,8 +1,15 @@
-# Exclude folder
+# Local presentation materials
 slide results/
 presentation slide/
 
-# Exclude specific files (add extensions like .pdf or .docx if applicable)
+# Local workspace files
 project w
+*.code-workspace
+
+# Private case-study documents (with or without extensions)
 case study
+case study.*
 Case Study roadmap
+Case Study roadmap.*
+Operations Analyst Case Study roadmap
+Operations Analyst Case Study roadmap.*

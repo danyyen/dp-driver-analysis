@@ -178,16 +178,41 @@ These are **deployment success criteria**, not outcomes claimed by the historica
 
 ## Repository guide
 
+### Folder structure
+
 ```text
-data/                 Analysis datasets
-notebooks/            Exploratory and statistical analysis
-dashboard/            Power BI assets
-result_images/        Published analysis and dashboard visuals
-presentation slide/   Presentation material
-README.md             Business and technical narrative
+.
+├── README.md
+├── data/
+│   ├── telemetry_data.xlsx
+│   └── merged_operational_data.csv
+├── notebooks/
+│   └── code_analysis.ipynb
+├── dashboard/
+│   └── OpsView_Dashboard.pbix
+└── result_images/
+    └── Analysis charts and dashboard screenshots
 ```
 
-A future repository cleanup can move presentation material and published figures under a consolidated `docs/` directory; the existing paths are retained here so current visual links remain stable.
+### Where to find each resource
+
+| Resource | File or folder | Purpose |
+|---|---|---|
+| Project overview | [README.md](./README.md) | Business problem, findings, operational interpretation, and limitations |
+| Telemetry workbook | [telemetry_data.xlsx](./data/telemetry_data.xlsx) | Operational data in Excel format |
+| Merged dataset | [merged_operational_data.csv](./data/merged_operational_data.csv) | Combined data for analysis |
+| Analysis notebook | [code_analysis.ipynb](./notebooks/code_analysis.ipynb) | Exploratory analysis, statistical modeling, and model interpretation |
+| Power BI dashboard | [OpsView_Dashboard.pbix](./dashboard/OpsView_Dashboard.pbix) | Interactive reporting file for Power BI Desktop |
+| Visual evidence | [result_images/](./result_images/) | Analysis charts and dashboard screenshots referenced in this guide |
+
+Presentation materials in `presentation slide/` and `slide results/` are kept locally and excluded from Git tracking.
+
+### Suggested reading order
+
+1. **Understand the findings:** start with [Results at a glance](#results-at-a-glance) and the operational interpretation in this README.
+2. **Review the evidence:** browse the [charts and dashboard screenshots](./result_images/).
+3. **Explore the analysis:** open the [notebook](./notebooks/code_analysis.ipynb) and inspect the supporting [datasets](./data/).
+4. **Explore the reporting:** open the [dashboard](./dashboard/OpsView_Dashboard.pbix) in Power BI Desktop.
 
 ---
 
