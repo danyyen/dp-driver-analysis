@@ -1,137 +1,161 @@
 # District Cooling Service-Risk Analytics
 
-### Finding when customer pressure is most at risk—and what operations should watch before service fails
+### Identifying when customer differential pressure becomes vulnerable — and what operations should watch before service falls below target
 
-**Python · pandas · statsmodels · scikit-learn · SHAP · Power BI**
+**Python · statsmodels · scikit-learn · SHAP · Power BI**
 
-A customer pressure failure is the end of the story. Operations needs earlier signals.
+A district cooling network needs to maintain adequate customer differential pressure (DP). This project examines the operating conditions associated with DP risk and translates the findings into a practical monitoring view.
 
-This analysis combines 5-minute plant telemetry with weather conditions to investigate **when customer differential pressure (DP) deteriorates, which operating conditions move with that deterioration, and what should be monitored before the 12 PSI service target is crossed**.
+The core question:
 
-> **Business question:** When does DP risk increase, what conditions accompany it, and where can operations focus attention before service falls below target?
+> **When does customer DP become vulnerable, which signals move with that risk, and what should operations monitor before the 12 PSI target is crossed?**
 
-## Executive finding
+<p align="center">
+  <img src="result_images/dashboard.jpg" width="900" alt="District cooling operations dashboard"/>
+</p>
 
-The clearest operational signal is **time concentration**.
+## Results at a glance
 
-In the validated comparison, **37.9% of observations during the 13:00–17:00 window were below 12 PSI, versus 15.4% outside that window**.
+| Finding | Evidence | Why it matters |
+|---|---:|---|
+| Peak-period breach risk | **37.9% vs 15.4%** | Risk is materially higher during the peak operating window |
+| Peak window | **13:00–17:00** | Focus readiness and monitoring where vulnerability is concentrated |
+| Weather relationship | Humidex–DP **r = -0.74** | Hotter/more humid conditions provide useful risk context |
+| Demand relationship | Flow–DP **r = -0.68** | Rising network demand is part of the pressure-risk picture |
+| Multivariable model | **R² ≈ 0.79** | The observed operating variables explain a substantial share of DP variation |
 
-That is roughly a **2.5× higher observed breach rate** during the afternoon window.
+The dataset contains **4,032 time-series observations** at 5-minute cadence, joined with hourly weather data.
 
-The practical implication is not “change one control because a model coefficient is large.” It is to treat the afternoon period as a higher-risk operating regime and monitor customer DP, system flow, weather load, output pressure, and plant dispatch together.
+## 1. The risk is not evenly distributed through the day
 
-## Analysis workflow
+The strongest business signal is the concentration of DP vulnerability during the afternoon operating window.
 
-```text
-5-minute plant telemetry + hourly weather
-                  ↓
-       Data quality + alignment
-                  ↓
-         Peak-risk comparison
-                  ↓
-   Multivariable regression (HAC)
-                  ↓
-      Interaction / SHAP analysis
-                  ↓
-        Operational monitoring
-```
+<p align="center">
+  <img src="result_images/daily%20psi%20slide%203.png" width="860" alt="Customer differential pressure over time"/>
+</p>
 
-The analysis uses multiple methods because each answers a different question:
+A simple average can hide that pattern. Breaking the day into operating windows shows where service risk deserves more attention.
 
-- **descriptive analysis** identifies when risk concentrates;
-- **regression** separates overlapping relationships while controlling for other measured conditions;
-- **interaction analysis** tests whether relationships change across operating regimes; and
-- **SHAP** provides an additional model-interpretation view rather than a causal ranking.
+The validated like-for-like comparison is:
 
-## What the data says
+- **Peak period:** 37.9% of observations below 12 PSI
+- **Outside peak:** 15.4% below 12 PSI
+- Peak-period breach risk is therefore roughly **2.5×** the outside-peak rate
 
-### 1. Afternoon operation deserves disproportionate attention
+That makes the 13:00–17:00 period a practical monitoring priority.
 
-The 13:00–17:00 window shows a substantially higher observed rate of DP falling below the 12 PSI target: **37.9% vs. 15.4%** outside that period.
+## 2. Demand conditions line up with the risk window
 
-For an operator, that converts a broad “watch pressure” instruction into a more specific monitoring question: **what is changing as the system enters the afternoon demand window?**
+Cooling demand and DP behaviour change together across the day.
 
-### 2. Weather and flow provide demand context
+<p align="center">
+  <img src="result_images/dp%20frequency%20and%20cooling%20demand%20by%20hour.png" width="820" alt="DP frequency and cooling demand by hour"/>
+</p>
 
-Humidex and system flow move negatively with DP in the observed data. They are useful context for identifying periods when the network is under greater demand pressure.
+This does not prove that time of day itself causes a breach. It shows that the higher-risk period coincides with a different operating regime—higher network demand, different flow conditions, weather load, and plant dispatch.
 
-They should not be interpreted as isolated causes. Weather, flow, dispatch, and pressure are part of the same operating system and can move together.
+That distinction matters because operational action should target the system conditions, not the clock.
 
-### 3. Output pressure has a positive adjusted relationship with customer DP
+## 3. Weather is useful context, not a causal claim
 
-After controlling for the other modeled variables, output pressure retains a positive relationship with customer DP.
+Humidex is strongly negatively associated with customer DP in the observed period.
 
-That makes it operationally relevant, but the coefficient is **not** treated as a direct setpoint recommendation. Control changes require engineering validation because observational data cannot establish the physical response to an intervention.
+<p align="center">
+  <img src="result_images/dp%20response%20across%20humidex%20slide%206.png" width="820" alt="DP response across humidex range"/>
+</p>
 
-### 4. Plant coefficients require operational context
+The observed Humidex–DP correlation is approximately **-0.74**.
 
-Plant 1 and Plant 2 coefficients are not interpreted as simple “good plant / bad plant” effects.
+Weather cannot be controlled, but it can improve readiness. Higher Humidex combined with rising demand can justify closer monitoring before the DP margin becomes critical.
 
-Dispatch can be endogenous: a plant may start or increase output **because** load is already rising or DP is already deteriorating. In that situation, the model can capture both plant behaviour and the operating condition that triggered it.
+The analysis treats weather as a **contextual early-warning signal**, not proof that Humidex directly causes a particular DP response.
 
-That is why the project separates **diagnostic evidence** from **causal claims**.
+## 4. Multivariable analysis separates overlapping relationships
 
-## A modeling trap I deliberately avoided
+Pairwise correlations are useful for exploration, but plant loading, flow, weather, demand, and pressure can move together.
 
-Raw regression coefficients are not a valid importance ranking when variables use different units and scales.
+A multivariable regression was therefore used to estimate adjusted relationships while controlling for the other observed variables. HAC robust standard errors were used to reduce sensitivity to heteroskedasticity and serial correlation in the time-series residuals.
 
-A coefficient measured per PSI cannot be compared directly with one measured per ton, GPM, or degree of humidex and then declared the “strongest driver.”
+The fitted model explains approximately **79% of observed DP variation (R² ≈ 0.79)**.
 
-Instead, the model is used to understand adjusted relationships and operating context. Any importance comparison requires a common scale or an appropriate interpretation method.
+Raw regression coefficients are **not used to rank variables** when their units and scales differ. A larger coefficient does not automatically mean a variable is the stronger operational driver.
 
-This distinction matters because a statistically impressive result can still lead to a poor operational recommendation if its units, endogeneity, or physical context are ignored.
+## 5. SHAP provides a second model-behaviour check
 
-## From analysis to an operating response
+SHAP was used as an additional interpretability lens to examine which features most influenced the fitted model's predictions and whether the directions broadly aligned with the statistical analysis.
 
-The evidence supports a simple control-room workflow:
+<p align="center">
+  <img src="result_images/shap%20confirmation.png" width="820" alt="SHAP model interpretation"/>
+</p>
 
-1. **Track customer DP against 12 PSI continuously.**
-2. **Escalate attention before and during 13:00–17:00.**
-3. **Read pressure together with flow, humidex and plant dispatch—not in isolation.**
-4. **Investigate deterioration while margin still exists rather than after a threshold breach.**
-5. **Use engineering review or controlled operating tests before changing setpoints based on model output.**
+SHAP explains the fitted model. It does **not** convert observational data into causal evidence.
 
-A production implementation could turn these signals into a risk-monitoring layer that warns operators when several adverse conditions begin converging.
+## Operational interpretation
 
-## What this project demonstrates
+The analysis supports a simple monitoring framework:
 
-The technical work is only part of the project. The larger skill is translating noisy operational telemetry into a recommendation that respects both statistics and engineering reality.
+1. Track customer DP against the 12 PSI target.
+2. Give the **13:00–17:00** window more operational attention.
+3. Review DP together with flow, demand, weather, output pressure, and plant dispatch.
+4. Investigate deterioration before the threshold is crossed.
+5. Validate any control or setpoint change with engineering.
 
-The project demonstrates:
+A useful operating view is therefore not a single KPI. It is the combination:
 
-- time-series operational analysis;
-- joining telemetry with external weather data;
-- regression with heteroskedasticity/autocorrelation-consistent inference;
-- interaction analysis and model interpretation;
-- distinguishing association from causation;
-- recognizing dispatch endogeneity;
-- translating analytical evidence into monitoring decisions; and
-- communicating limitations before recommending operational change.
+~~~text
+Customer DP
+   +
+Demand / Flow
+   +
+Weather context
+   +
+Plant loading / output conditions
+   ↓
+Risk review
+   ↓
+Engineering-validated action
+~~~
 
-## Repository structure
+## Why the plant coefficients require care
 
-```text
-notebooks/       reproducible analysis notebooks
-src/             reusable analysis code
-data/            sanitized public analysis inputs
-result_images/   validated analytical visuals
-docs/            supporting documentation
-```
+Plant loading can be endogenous: a plant may start or increase output **because** system conditions are already deteriorating.
 
-## Reproducibility standard
+That means a raw or adjusted plant coefficient can reflect both the plant's operating effect and the dispatch decision that put the plant into service.
 
-The public project uses neutral field names and repository-relative paths. It should not depend on local machine paths, employer/customer identifiers, private case materials, or inaccessible source files.
+For that reason, the analysis does not claim that a plant coefficient proves hydraulic causation. Confirming the mechanism would require additional information such as plant sequencing, operating logs, and network topology.
 
-Every headline metric presented here should be reproducible from the public analysis. If a result cannot be reproduced, it does not belong in the README.
+## Analytical workflow
+
+~~~mermaid
+flowchart LR
+    A[5-minute plant telemetry] --> C[Validation & feature engineering]
+    B[Hourly weather] --> C
+    C --> D[Time / threshold analysis]
+    D --> E[Correlation & multivariable regression]
+    E --> F[Interactions & SHAP]
+    F --> G[Risk conditions]
+    G --> H[Power BI operating view]
+~~~
 
 ## Limitations
 
-- This is observational analysis; it does **not** establish causation.
-- Plant dispatch may respond to the same conditions affecting DP, creating endogeneity.
-- Weather and operating variables interact and should not be interpreted as independent physical levers.
-- The available observation period may not represent every season or operating regime.
-- Engineering validation is required before changing operating controls or setpoints.
+- The analysis is observational and does not establish causation.
+- The available period may not represent every season or operating regime.
+- Plant dispatch may respond to the same demand conditions that affect DP.
+- Model coefficients depend on variable units, scaling, specification, and observed range.
+- A live early-warning system would require prospective validation and explicit alert-performance testing.
+- Engineering review is required before changing plant controls or operating setpoints.
+
+## Repository contents
+
+~~~text
+data/                 Public analysis dataset
+result_images/        Published analysis and dashboard visuals
+README.md             Business and technical narrative
+~~~
+
+The public repository is intentionally limited to the analysis data and presentation-safe evidence. Private source materials, local metadata, and non-reproducible development artifacts are excluded from the current public version.
 
 ---
 
-**What I would discuss in an interview:** how I moved from a threshold-breach problem to a risk-window analysis, why I refused to rank raw coefficients across incompatible units, how dispatch endogeneity changes the Plant 1/Plant 2 interpretation, and how I would turn the analysis into a monitored operational decision system.
+**What this repository demonstrates:** operational analytics, time-series investigation, statistical modeling, robust inference, model explainability, Power BI communication, and disciplined separation of evidence from causal interpretation.
