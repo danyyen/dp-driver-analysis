@@ -1,5 +1,6 @@
 # Exclude folder
 slide results/
+presentation slide/
 
 # Exclude specific files (add extensions like .pdf or .docx if applicable)
 project w
