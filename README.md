@@ -6,7 +6,7 @@ An operational analytics investigation that combines plant telemetry and weather
 
 The work connects statistical analysis to an operations-focused Power BI decision layer while keeping a clear distinction between **association, operational interpretation, and causal engineering conclusions**.
 
-> **Reading the preserved chart:** the image below compares peak five-minute readings with non-peak hours containing a breach. Those are different denominators. The comparable five-minute rates are **37.9% peak and 15.4% non-peak**, as calculated in the notebook and reported below.
+**Chart basis:** both groups use five-minute readings below 12 PSI. Peak is the highest quartile of cooling demand.
 
 ![Peak vs Non-Peak Threshold Breach Rate](result_images/threshold%20breach%20rate%20peakvsnopeak%20slide%203.png)
 
@@ -75,7 +75,7 @@ The threshold-breach rate was **37.9% during peak conditions (382 of 1,008 readi
 
 ![Peak summary](result_images/peak%20summary.jpg)
 
-The existing image files are retained for visual continuity. The legacy non-peak hourly measure is **21.7% (57 of 263 hours)**, where an hour is flagged if any included non-peak reading is below 12 PSI. Its average of hourly DP means is approximately **18.66 PSI**. These hourly measures have different weighting and must not replace the five-minute comparison above.
+The separate non-peak hourly measure retained in the notebook is **21.7% (57 of 263 hours)**, where an hour is flagged if any included non-peak reading is below 12 PSI. Its average of hourly DP means is approximately **18.66 PSI**. These hourly measures have different weighting and must not replace the five-minute comparison above.
 
 ### Operational interpretation
 
@@ -192,7 +192,7 @@ These are **deployment success criteria**, not outcomes claimed by the historica
 - HAC covariance adjusts coefficient uncertainty; it does not remove residual autocorrelation or make an observational model causal. The notebook compares 6, 12, 24, and 48 lags.
 - Plant 2 readings at or below 1 use the existing zero-production cleaning convention. The notebook retains original readings and checks sensitivity to excluding the negative readings.
 - The supplied CSV retains a legacy `is_peak` field based on high Humidex. The corrected notebook defines `is_peak` from cooling demand to agree with `peak_condition`; it does not overwrite the CSV.
-- Published image files are unchanged. Historical figures with different aggregation or labeling are explained beside the images; the recomputed notebook tables are the reference for current numerical claims.
+- The peak/non-peak breach chart uses the corrected five-minute comparison. Other historical images are retained, with aggregation and coefficient-unit context explained alongside them. The recomputed notebook tables are the reference for current numerical claims.
 
 ## Repository guide
 
