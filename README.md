@@ -1,903 +1,194 @@
-# Operational Analytics: Differential Pressure Investigation in a District Cooling Network
+# District Cooling Service-Risk Analytics
 
-### What drives customer pressure failures — and can operations see them coming?
+### Identifying the operating conditions associated with customer differential-pressure risk
 
-> **An operational analytics case study transforming plant telemetry and weather data into explainable insights, operational decisions, and an executive Power BI command center.**
+An operational analytics investigation that combines plant telemetry and weather data to explain **when customer differential pressure (DP) becomes vulnerable, which signals provide early warning, and which operating variables warrant closer operational review**.
 
----
-![threshold breach rate peak vs nopeak](result_images/threshold%20breach%20rate%20peakvsnopeak%20slide%203.png)
-
----
-**Project Gallery:** [View all project visualizations](./result_images/)
-
----
-## Results at a Glance
-
-| Key Result | Supporting Evidence |
-|---|---|
-| **Output Pressure** → Strongest controllable operational driver of customer differential pressure (DP). | ![Output pressure operational driver](result_images/factors%20for%20DP.png) |
-| **Afternoon Peak** → Concentrated DP risk during high-demand operating windows. | ![Peak DP risk and cooling demand](result_images/dp%20frequency%20and%20cooling%20demand%20by%20hour.png) |
-| **Humidex / Demand** → High-correlation environmental indicators suitable for early-warning alerting. | ![DP response across Humidex range](result_images/dp%20response%20across%20humidex%20slide%206.png) |
-| **Plant 1 Loading** → Confounding and statistical sign reversal identified and corrected via multiple regression. | ![Correlation evidence](result_images/correlation%20matr.png)<br><br>![Controlled regression evidence](result_images/factors%20for%20DP.png) |
-| **Power BI Dashboard** → Statistical findings fully translated into real-time operational decision support. | ![Operations performance dashboard](result_images/dashboard.jpg) |
----
-
-## Quantitative Evidence
-
-| Metric / Analysis | Quantitative Result | Operational Significance |
-|---|---:|---|
-| **Dataset Size** | `4,032` time-series observations | High-density telemetry covering peak operational periods |
-| **Operational Target** | `12.0 PSI` minimum customer DP | Critical service-level agreement (SLA) threshold |
-| **Model Explanatory Power** | `R² ≈ 0.79` | ~79% of customer DP variance explained by model drivers |
-| **Target Threshold Deficit** | `14.2%` of peak-hour logs | Percentage of time customer DP dipped below 12 PSI target |
-| **Controllable Driver Impact** | `+0.42 PSI` DP gain / +10 PSI output pressure | Direct operational leverage available to operators |
-| **Weather Risk Sensitivity** | `-0.18 PSI` DP drop / +5°C Humidex increase | Quantified environmental risk during summer peak loads |
-
----
-
-### Key Operational Risk Metrics
-
-* **SLA Breach Concentration:** **78% of all DP drops (< 12 PSI)** occurred between **13:00 and 17:00**, establishing a clear time window for proactive pressure boosting.
-* **Peak Findings:**
-![peak summary](result_images/peak%20summary.jpg)
-
-* **Interaction Penalty:** High plant loading combined with high network demand amplified DP degradation by an additional **0.8 PSI penalty** over baseline predictions.
-* **Model Reliability:** All driver p-values were statistically significant ($p < 0.001$) using **HAC (Heteroskedasticity and Autocorrelation Consistent) robust standard errors** to account for time-series serial correlation.
-
-## Quantitative Evidence
-
-| Metric / Analysis | Quantitative Result | Operational Significance |
-|---|---:|---|
-| **Dataset Size** | `4,032` time-series observations | High-density operational telemetry across the two-week assessment window |
-| **Operational Target** | `12.0 PSI` minimum customer DP | Service threshold used to identify DP upsets |
-| **Model Explanatory Power** | `R² ≈ 0.79` | Approximately 79% of observed customer DP variation was explained by the modeled operating conditions |
-| **Peak DP Performance** | `13.57 PSI` average | Customer DP operated much closer to the 12 PSI threshold during peak conditions |
-| **Non-Peak DP Performance** | `18.66 PSI` average | Greater pressure margin was observed outside peak conditions |
-| **Peak Threshold-Breach Rate** | `37.9%` | 382 of 1,008 peak observations were below 12 PSI |
-| **Non-Peak Threshold-Breach Rate** | `21.7%` | Threshold breaches were substantially less frequent outside peak conditions |
-| **Peak vs. Non-Peak Risk** | `~1.75×` higher breach rate | Quantifies the elevated service risk associated with peak operating conditions |
-| **Humidex–DP Correlation** | `r = -0.74` | Strong negative association identifies weather as an important network-risk indicator |
-| **Flow–DP Correlation** | `r = -0.68` | Higher network flow was strongly associated with lower customer DP |
-
----
-
-### Key Operational Risk Metrics
-
-* **Peak Risk:** The 12 PSI threshold-breach rate increased from **21.7% during non-peak conditions to 37.9% during peak conditions — approximately 1.75× higher**.
+The work connects statistical analysis to an operations-focused Power BI decision layer while keeping a clear distinction between **association, operational interpretation, and causal engineering conclusions**.
 
 ![Peak vs Non-Peak Threshold Breach Rate](result_images/threshold%20breach%20rate%20peakvsnopeak%20slide%203.png)
 
-* **Pressure Margin:** Average customer DP decreased from **18.66 PSI during non-peak conditions to 13.57 PSI during peak conditions**, reducing the average operating margin above the 12 PSI threshold from **6.66 PSI to 1.57 PSI**.
+**Project Gallery:** [View project visualizations](./result_images/)
 
-![peak summary](result_images/peak%20summary.jpg)
+## Results at a glance
 
-* **Weather Sensitivity:** Humidex showed a strong negative relationship with customer DP (**r = -0.74**), supporting its use as an environmental risk indicator for operational readiness.
+| Finding | Evidence | Decision relevance |
+|---|---:|---|
+| **Peak-period service risk** | 37.9% peak vs. 21.7% non-peak threshold-breach rate | Focus readiness and monitoring on higher-risk operating windows |
+| **Pressure-margin compression** | Average DP: 13.57 PSI peak vs. 18.66 PSI non-peak | Monitor deterioration before the 12 PSI threshold is crossed |
+| **Weather relationship** | Humidex–DP correlation: `r = -0.74` | Use weather as contextual early-warning information |
+| **Network-demand relationship** | Flow–DP correlation: `r = -0.68` | Treat rising network demand as part of the risk context |
+| **Multivariable model** | `R² ≈ 0.79` | Separate overlapping relationships among observed operating conditions |
+| **Output-pressure relationship** | Approx. `+0.42 PSI` DP per `+10 PSI` output pressure in the fitted model | Potential operational lever requiring engineering validation |
 
-* **Network Demand:** Total system flow also showed a strong negative relationship with customer DP (**r = -0.68**), reinforcing the connection between high-demand network conditions and reduced pressure margin.
+The dataset contains **4,032 time-series observations**. The service threshold used in the analysis is **12 PSI**.
 
-* **Model Explanatory Power:** The multivariable model achieved **R² ≈ 0.79**, indicating that the modeled operational and environmental conditions explained a substantial share of observed customer DP variation.
+> These results describe relationships in the observed data. They do not, by themselves, establish physical causation or prescribe an operating setpoint.
 
----
+## The operational problem
 
----
-## The Business Problem
+Reliable chilled-water delivery depends on maintaining adequate customer differential pressure. Periods below the 12 PSI operating target were not distributed uniformly: risk increased during higher-demand conditions and particular times of day.
 
-In a district cooling network, maintaining adequate **customer differential pressure (DP)** is essential for reliable chilled-water delivery.
+The analysis was therefore framed around four practical questions:
 
-Operations observed recurring periods where customer DP dropped below the operational target of **12 PSI**, particularly during periods of elevated cooling demand.
+> **When is customer DP most vulnerable?**  
+> **Which variables remain associated with DP after accounting for other observed conditions?**  
+> **Which signals could help operations recognize rising risk earlier?**  
+> **Which potential operating levers deserve engineering validation?**
 
-But knowing that DP dropped was not enough.
-
-The more important operational questions were:
-
-> **Why is DP falling?**
-
-> **When is the network most vulnerable?**
-
-> **Which drivers can operations actually influence?**
-
-> **Can deteriorating conditions be recognized before customer service is affected?**
-
-This project was built to answer those questions.
-
----
-
-## The Decision This Analysis Improves
-
-The objective was not simply to build a statistical model or explain historical plant performance.
-
-The objective was to improve an operational decision:
-
-> ### **When should operators intervene, and which operating conditions should they investigate or adjust, to reduce the risk of customer DP falling below target?**
-
-This reframes the operating approach from:
+## Decision framework
 
 ```text
-REACTIVE
-
-DP Falls Below Target
-        ↓
-Alarm
-        ↓
-Investigate
-        ↓
-Respond
+Observed DP
+    ↓
+Risk window / trend
+    ↓
+Demand + weather context
+    ↓
+Operational-driver analysis
+    ↓
+Potential controllable levers
+    ↓
+Engineering validation
+    ↓
+Operational decision
 ```
 
-toward:
+This avoids treating every statistically important variable as directly controllable.
 
-```text
-PROACTIVE
+- **Outcome:** customer DP and threshold breaches.
+- **Risk context:** time of day, Humidex, cooling demand, and flow.
+- **Operational variables:** output pressure and plant loading.
+- **Decision layer:** monitoring, readiness, investigation, and validated intervention.
 
-Risk Conditions Develop
-        ↓
-Early Warning
-        ↓
-Identify Key Drivers
-        ↓
-Evaluate Controllable Levers
-        ↓
-Operational Intervention
-        ↓
-Protect Customer Service
-```
+## 1. Peak conditions materially reduced pressure margin
 
-The goal is to move from simply detecting failure toward **recognizing the conditions that precede it**.
+Peak observations had an average customer DP of **13.57 PSI**, compared with **18.66 PSI** during non-peak periods. Relative to the 12 PSI threshold, that reduced the average observed margin from **6.66 PSI to 1.57 PSI**.
 
----
+The threshold-breach rate was **37.9% during peak conditions (382 of 1,008 observations)** versus **21.7% outside peak conditions**, approximately **1.75× higher**.
 
-## The Analytical Lens
+![Peak summary](result_images/peak%20summary.jpg)
 
-Not every statistically important variable leads to the same type of operational decision.
+### Operational interpretation
 
-The investigation therefore looked at the system through four lenses:
+Historically higher-risk periods justify closer monitoring and pre-peak review of DP, demand, flow, plant loading, and output-pressure conditions. This is a prioritization signal, not evidence that time of day itself causes a breach.
 
-| Lens                    | Business Question                                  | Examples                         |
-| ----------------------- | -------------------------------------------------- | -------------------------------- |
-| **Service Reliability** | Are customers receiving adequate pressure?         | Customer DP, 12 PSI target       |
-| **Network Stress**      | When is the system most vulnerable?                | Cooling demand, flow, peak hours |
-| **Operational Control** | What can operators potentially influence?          | Output pressure, plant loading   |
-| **Early Warning**       | What signals indicate that risk may be increasing? | Humidex, demand, DP trajectory   |
+## 2. Weather and network demand provide useful risk context
 
-This creates a practical decision hierarchy:
+Humidex showed a strong negative association with customer DP (`r = -0.74`), while total system flow also showed a strong negative association (`r = -0.68`).
 
-### **Outcome → Risk Signal → Operational Driver → Controllable Lever**
+![DP response across Humidex range](result_images/dp%20response%20across%20humidex%20slide%206.png)
 
-The distinction matters because a variable can be analytically important without being directly controllable.
+Weather cannot be controlled, but it can contribute to operational readiness. Elevated Humidex combined with rising demand can justify closer attention to the system before pressure margin becomes critical.
 
-Weather, for example, cannot be changed — but it may help operations anticipate when system conditions are becoming more demanding.
+## 3. Multivariable analysis separated overlapping effects
 
----
+Pairwise correlations are useful for exploration but can be misleading when operating variables move together. Multiple linear regression was therefore used to estimate each variable's adjusted relationship with customer DP while controlling for the other observed variables in the model.
 
-## What Success Would Look Like
+![Controlled regression evidence](result_images/factors%20for%20DP.png)
 
-A useful analytics solution should ultimately improve operating performance — not simply produce a better model.
+The fitted model explained approximately **79% of observed DP variation (`R² ≈ 0.79`)**. HAC robust standard errors were used to reduce sensitivity to heteroskedasticity and serial correlation in the time-series residuals.
 
-If this framework were deployed operationally, success could be measured through:
+### Output pressure
 
-| Business Outcome             | Operational KPI                                               | Desired Direction |
-| ---------------------------- | ------------------------------------------------------------- | ----------------: |
-| **Protect customer service** | Frequency of DP events below 12 PSI                           |          Decrease |
-| **Reduce event severity**    | Minutes spent below target                                    |          Decrease |
-| **Improve response**         | Time from deterioration to intervention                       |          Decrease |
-| **Improve anticipation**     | High-risk events identified before threshold breach           |          Increase |
-| **Improve peak performance** | Peak-period DP upsets                                         |          Decrease |
-| **Increase visibility**      | Shared visibility of DP, demand, weather and plant conditions |          Increase |
-| **Improve consistency**      | Use of common operating triggers across shifts                |          Increase |
+Output pressure showed the strongest positive adjusted association among the evaluated operational variables. In the fitted specification, a 10 PSI increase in output pressure corresponded to approximately **+0.42 PSI customer DP**, holding the other included variables constant.
 
-> **The goal is not simply to explain historical DP. It is to help operations recognize risk earlier and make better-informed decisions before service performance deteriorates.**
+That makes output pressure a **candidate operational lever for engineering evaluation**, not proof that increasing pressure by a particular amount will produce the same causal response in live operations.
 
----
+## 4. Plant loading illustrates why correlation is not causation
 
-## From Raw Data to Operational Decision
+Exploratory analysis showed that plant loading, network flow, demand, and customer DP moved together in ways that changed after statistical controls were introduced.
+
+![Correlation evidence](result_images/correlation%20matr.png)
+
+Plant 1 in particular showed a sign reversal between simple and controlled relationships. This is consistent with **confounding or dispatch effects**: plant loading may change in response to the same demand conditions that are affecting DP.
+
+### Plausible operating interpretation — not a proven mechanism
+
+One possible explanation is that different plants play different roles across base-load and higher-demand conditions, and that an additional plant may be dispatched as system stress increases. Under that interpretation, plant loading can appear negatively associated with DP in raw data even if its adjusted relationship changes after demand and flow are controlled.
+
+The available observational data does **not** establish plant dispatch strategy or hydraulic causality. Confirming that explanation would require operating logs, plant sequencing information, network topology, and engineering review.
+
+This distinction is intentional: the statistical model identifies relationships worth investigating; it does not replace domain validation.
+
+## 5. Interaction effects represent changing system states
+
+The effect of one operating variable may depend on the level of another. Interaction terms were therefore evaluated to test whether important relationships changed under different system states rather than assuming a constant effect everywhere.
+
+The interaction specification improved explanatory performance relative to the simpler model, supporting the broader conclusion that customer DP should be interpreted as the outcome of an interconnected operating environment.
+
+## 6. SHAP adds a model-behaviour lens
+
+SHAP was used as a second interpretability lens to examine which features influenced model predictions and whether their direction broadly aligned with the statistical analysis.
+
+SHAP is used here to explain the fitted model's behaviour; it is **not presented as causal evidence**.
+
+## From analysis to decision support
 
 ```mermaid
 flowchart LR
-    A["Plant Telemetry"] --> C["Validate & Engineer"]
-    B["Weather Data"] --> C
-    C --> D["Understand Behaviour"]
-    D --> E["Quantify DP Drivers"]
-    E --> F["Test Interactions"]
-    F --> G["Identify Risk Conditions"]
-    G --> H["Operations Dashboard"]
-    H --> I["Operator Decision"]
-    I --> J["Protect Service"]
+    A[Plant telemetry] --> C[Validate & engineer]
+    B[Weather data] --> C
+    C --> D[Explore behaviour]
+    D --> E[Multivariable analysis]
+    E --> F[Interactions & explainability]
+    F --> G[Risk conditions]
+    G --> H[Power BI decision layer]
+    H --> I[Operational review]
 ```
 
-The analytical workflow deliberately moves through:
+The dashboard translates the analysis into a common operating view of DP performance, demand, weather, flow, and plant conditions.
 
-### **Data → Evidence → Explanation → Decision → Business Outcome**
+![Operations performance dashboard](result_images/dashboard.jpg)
 
----
+## What success would look like in operational use
 
-# What the Data Revealed
+If the framework were implemented in a live operating environment, useful outcome measures would include:
 
-## 1. Output Pressure Emerged as the Strongest Controllable Driver
+| Business outcome | KPI | Desired direction |
+|---|---|---:|
+| Protect customer service | Frequency of DP observations/events below target | Decrease |
+| Reduce severity | Duration below target | Decrease |
+| Improve response | Time from deterioration to intervention | Decrease |
+| Improve anticipation | High-risk conditions identified before breach | Increase |
+| Improve peak performance | Peak-period DP upsets | Decrease |
+| Improve visibility | Shared view of DP, demand, weather, and plant conditions | Increase |
 
-After accounting for other operating conditions, higher system output pressure was consistently associated with improved customer differential pressure.
+These are **deployment success criteria**, not outcomes claimed by the historical analysis.
 
-This distinction is important.
+## Analytical approach
 
-Weather, time of day, and system demand may help explain **when risk increases**, but output pressure represents a potential **operational lever**.
+1. Validate and align five-minute plant telemetry with hourly weather data.
+2. Define the 12 PSI service threshold and peak/non-peak operating windows.
+3. Explore distributions, time patterns, and pairwise relationships.
+4. Fit multivariable regression to separate overlapping associations.
+5. Use HAC robust inference for time-series dependence concerns.
+6. Test interaction terms for changing operating states.
+7. Use SHAP as an additional model-explainability check.
+8. Translate the evidence into an operations-focused dashboard and decision framework.
 
-### Why this matters
+## Limitations and responsible interpretation
 
-A purely reactive strategy waits for:
+- The analysis is observational; statistical association does not establish physical causation.
+- `R²` describes in-sample explanatory fit and should not be interpreted as guaranteed operational predictive performance.
+- Regression coefficients depend on the model specification and observed operating range.
+- Plant-loading relationships may reflect dispatch logic, demand, network topology, or omitted operating conditions.
+- The 12 PSI threshold is used as the service-risk definition for this analysis; operational actions should remain within approved engineering and equipment limits.
+- A production early-warning system would require prospective validation, monitoring, and explicit alert-performance metrics.
+
+## Repository guide
 
 ```text
-Customer DP < 12 PSI
+data/                 Analysis datasets
+notebooks/            Exploratory and statistical analysis
+dashboard/            Power BI assets
+result_images/        Published analysis and dashboard visuals
+presentation slide/   Presentation material
+README.md             Business and technical narrative
 ```
 
-before triggering attention.
-
-The analysis suggests there may be value in evaluating pressure readiness **before** that threshold is crossed, particularly when other risk indicators are already elevated.
-
-### Decision implication
-
-Evaluate output-pressure readiness ahead of known high-demand periods using the wider system context:
-
-### **Current DP + DP Trend + Cooling Demand + Flow + Output Pressure**
-
-Any resulting operational adjustment should remain within approved engineering and equipment limits.
+A future repository cleanup can move presentation material and published figures under a consolidated `docs/` directory; the existing paths are retained here so current visual links remain stable.
 
 ---
 
-## 2. Weather Can Act as an Early-Warning Signal
-
-Higher **Humidex** was associated with changing cooling demand and network conditions.
-
-Weather itself is not controllable.
-
-Its value is therefore not as an operating lever, but as a potential **leading indicator of changing system stress**.
-
-<p align="center">
-  <img src="result_images/dp%20response%20across%20humidex%20slide%206.png" width="800"/>
-</p>
-
-### Decision implication
-
-Weather conditions and expected cooling demand can become part of **pre-peak operational planning**.
-
-For example, elevated Humidex combined with rising cooling demand could trigger closer monitoring of:
-
-* customer DP;
-* output pressure;
-* network flow;
-* plant loading; and
-* DP trajectory.
-
-This converts weather from contextual information into a potential **readiness signal**.
-
----
-
-## 3. Afternoon Peaks Created Elevated DP Risk
-
-DP upsets were concentrated around periods of elevated cooling demand rather than occurring uniformly throughout the day.
-
-<p align="center">
-  <img src="result_images/dp%20frequency%20and%20cooling%20demand%20by%20hour.png" width="800"/>
-</p>
-
-### Why this matters
-
-If risk is concentrated during predictable operating windows, monitoring and intervention do not need to be equally aggressive throughout the entire day.
-
-The operating question changes from:
-
-> *What should we do after DP falls below target?*
-
-to:
-
-> **What conditions tell us that operations should prepare before the high-risk period begins?**
-
-### Decision implication
-
-Historically higher-risk periods can be used to prioritize:
-
-* closer DP monitoring;
-* pre-peak operational reviews;
-* pressure readiness;
-* plant dispatch assessment; and
-* earlier escalation when conditions begin to deteriorate.
-
----
-
-## 4. Correlation Alone Did Not Tell the Whole Story
-
-Exploratory correlation analysis was used to understand the initial relationships between customer DP and the wider operating system.
-
-<p align="center">
-  <img src="result_images/correlation%20matr.png" width="750"/>
-</p>
-
-One particularly important result involved **Plant 1 loading**.
-
-Its raw correlation with customer DP suggested a negative relationship.
-
-However, after controlling for flow, system demand, and other operational variables, the multivariable regression model revealed a positive independent association.
-
-This sign reversal highlights the role of **confounding variables**.
-
-Plant loading changes alongside other system conditions. Looking at loading and DP alone can therefore produce a different conclusion from examining loading while holding other observed factors constant.
-
-
-### Operational Insight: Plant 1 vs. Plant 2 Dynamics and What it may mean
-
-While simple correlations initially suggested both plants move in the same direction with customer pressure, the controlled regression model reveals opposite, complementary operational roles:
-
-* **Plant 2 (Base Load & System Demand Driver):** Plant 2 acts as the primary base-load facility. During high cooling demand, Plant 2 increases output to carry overall network flow. Higher flow through main transmission lines naturally increases pipe friction losses, causing customer differential pressure (DP) at remote endpoints to decline. As a result, Plant 2 output naturally coincides with periods of system hydraulic stress.
-* **Plant 1 (Peaking Unit & Pressure Stabilizer):** Plant 1 serves as a secondary or peaking asset. It is dispatched strategically when overall cooling demand surges and customer DP drops near or below target thresholds (e.g., 12 PSI). Because Plant 1 fires up specifically to inject local flow and boost line pressure during critical periods, its production shows a direct positive impact on pressure recovery in the controlled model.
-
-In simple terms, the operating sequence may look like this:
-
-```text
-Cooling Demand Increases
-        ↓
-Plant 2 Loading Increases
-        ↓
-Network Flow / System Stress Increases
-        ↓
-Customer DP Begins to Decline
-        ↓
-Plant 1 Comes Online
-        ↓
-Additional Capacity Supports the System from dropping below 12psi
-```
-
-### Decision implication
-
-Plant loading, flow, demand, and pressure should be interpreted as an **interconnected operating system**, rather than as isolated KPIs.
-
-This is why operational recommendations were not derived directly from the correlation matrix.
-
----
-## 5. Multivariable Modeling Helped Separate Overlapping Effects
-
-Multiple linear regression was used to estimate the relationship between each operational variable and customer DP while controlling for other observed system conditions.
-
-<p align="center">
-  <img src="result_images/factors%20for%20DP.png" width="750"/>
-</p>
-
-The objective was not simply to identify which variables had the strongest raw relationship with DP.
-
-The more useful question was:
-
-> **After accounting for other observed operating conditions, which variables still contain evidence of an independent relationship with customer DP?**
-
-This distinction provides a stronger analytical foundation for operational interpretation than pairwise correlation alone.
-
----
-
-## 6. Interaction Effects Better Represented Real Operations
-
-Operational systems rarely behave according to a simple rule such as:
-
-> *Increase X by one unit and Y always changes by the same amount.*
-
-The effect of one operating variable can depend on the state of another.
-
-Interaction terms were therefore introduced to test whether important relationships changed under different operating conditions.
-
-The interaction model improved explanatory performance relative to the simpler specification.
-
-### Decision implication
-
-Operational responses may need to consider **combinations of conditions**, rather than assuming the same relationship applies under every system state.
-
-This reinforces the need to interpret customer DP as the outcome of an interconnected operating environment.
-
----
-
-## 7. SHAP Provided an Additional Explainability Lens
-
-Statistical modeling answered important questions about independent relationships, but a second interpretability lens was used to examine model behavior.
-
-SHAP values were used to understand:
-
-* which variables were influencing model predictions;
-* the direction of their influence; and
-* whether model behavior aligned with the broader statistical findings.
-
-<p align="center">
-  <img src="result_images/shap%20confirmation.png" width="750"/>
-</p>
-
-### Why use both statistics and SHAP?
-
-Regression helps answer:
-
-> **What is the estimated independent relationship after controlling for other observed variables?**
-
-SHAP helps answer:
-
-> **What is driving the model's predictions across observations?**
-
-These methods answer different questions.
-
-Using them together provides a stronger explanation than relying on correlation, regression coefficients, or feature importance alone.
-
----
-
-# From Insight to Action
-
-The analysis suggests a progression from **threshold-based monitoring** toward **risk-aware operations**.
-
-| Observed Condition         | Operational Interpretation           | Potential Response                                     |
-| -------------------------- | ------------------------------------ | ------------------------------------------------------ |
-| DP trending toward 12 PSI  | Service margin is narrowing          | Increase monitoring and assess current operating state |
-| High Humidex expected      | Cooling demand pressure may increase | Prepare for elevated network demand                    |
-| Afternoon peak approaching | Historically higher-risk period      | Review DP, flow, loading and output pressure together  |
-| High demand + declining DP | Network stress is increasing         | Evaluate controllable operating levers                 |
-| Repeated DP excursions     | Persistent service-risk pattern      | Escalate for engineering or operational review         |
-
-This creates a practical sequence:
-
-### **What changed? → What is driving it? → What is controllable? → Is intervention appropriate?**
-
-The recommendations are intended as **decision support**, not automated engineering instructions.
-
----
-
-# Operations Command Center
-
-Analysis creates business value when decision-makers can use it.
-
-The findings were translated into a **Power BI Operations Command Center** designed around operational questions rather than statistical outputs.
-
-<p align="center">
-  <img src="result_images/dashboard.jpg" width="950"/>
-</p>
-
-## The dashboard helps answer five questions
-
-### Are customers currently within target?
-
-Customer DP is monitored against the **12 PSI operating threshold**.
-
-### Is DP deteriorating?
-
-Trend information provides context beyond the current DP reading.
-
-### Is the network entering a higher-risk period?
-
-Cooling demand, Humidex, flow, and peak-period behavior provide context around changing system conditions.
-
-### What conditions are accompanying the deterioration?
-
-Operators can examine output pressure, plant loading, flow, demand, and environmental conditions together.
-
-### Does the situation require closer attention?
-
-DP status and operational KPIs provide a common view for investigation and escalation.
-
-### Dashboard Coverage
-
-* Customer DP vs. 12 PSI target
-* DP trend and deterioration
-* Network flow
-* Cooling demand
-* Humidex
-* Plant loading
-* Peak vs. non-peak performance
-* DP status distribution
-* Executive operational KPIs
-
-The purpose of the dashboard is not to ask operators or executives to interpret regression coefficients.
-
-It is to translate analytical findings into **operational visibility**.
-
----
-
-# Recommended Operational Decision Framework
-
-The analysis supports moving from purely reactive threshold monitoring toward a more risk-aware operating framework.
-
-## Before Peak Demand
-
-```text
-Weather Conditions
-        ↓
-Expected Cooling Demand
-        ↓
-Network Conditions
-        ↓
-Output Pressure Readiness
-        ↓
-Operational Preparedness
-```
-
-The objective is to identify whether known external conditions suggest that closer monitoring may be required before the historically higher-risk period begins.
-
----
-
-## During Operations
-
-```text
-DP Level
-   +
-DP Trajectory
-   +
-Flow & Demand
-   +
-Plant Conditions
-   ↓
-Operational Risk
-```
-
-Rather than relying on one KPI, the operating state can be evaluated using multiple pieces of evidence.
-
----
-
-## When Risk Increases
-
-Ask:
-
-### **What changed? → Which drivers are contributing? → Which are controllable? → Is intervention appropriate?**
-
----
-
-## After a DP Upset
-
-Evaluate:
-
-### **What conditions preceded the event? → How quickly did operations respond? → Could it have been anticipated? → What should change next time?**
-
-This creates a feedback loop between analytics and operational learning.
-
----
-
-# Business Recommendations
-
-Based on the analytical findings, five operational improvements should be evaluated.
-
-## 1. Pre-Peak Pressure Readiness
-
-Review output-pressure requirements before historically higher-risk demand periods rather than responding only after customer DP deteriorates.
-
----
-
-## 2. Weather-Informed Planning
-
-Incorporate Humidex and expected cooling demand into shift planning and peak-period readiness.
-
-Weather cannot be controlled, but it can provide context for when operations should increase awareness.
-
----
-
-## 3. Risk-Based DP Alerts
-
-Move beyond a simple threshold alert:
-
-```text
-DP < 12 PSI
-      ↓
-Alarm
-```
-
-toward a framework incorporating:
-
-```text
-DP Level
-   +
-DP Trajectory
-   +
-Demand
-   +
-Flow
-   +
-Weather
-   +
-Operating Conditions
-        ↓
-Elevated DP Risk
-```
-
-The objective would be to identify deterioration **before** a service threshold is breached.
-
----
-
-## 4. Integrated Plant Monitoring
-
-Evaluate plant loading alongside system demand, network flow, pressure, and environmental conditions rather than interpreting individual variables independently.
-
----
-
-## 5. Standardized Shift Visibility
-
-Use a common operational dashboard during shift handovers and operating reviews to improve visibility and decision consistency across teams.
-
----
-
-# Business Value
-
-This project demonstrates how operational telemetry can be transformed from historical records into a structured **decision-support capability**.
-
-| Business Need                           | Analytical Contribution                                          |
-| --------------------------------------- | ---------------------------------------------------------------- |
-| **Protect service reliability**         | Identify conditions associated with DP deterioration             |
-| **Improve operational readiness**       | Surface predictable peak-demand and weather risk                 |
-| **Reduce reactive decision-making**     | Provide earlier visibility into changing conditions              |
-| **Improve management visibility**       | Consolidate operational KPIs into a common dashboard             |
-| **Strengthen root-cause investigation** | Separate simple correlation from conditional relationships       |
-| **Improve decision consistency**        | Provide a shared operational view across shifts                  |
-| **Support continuous improvement**      | Create a framework for measuring events, responses, and outcomes |
-| **Enable future early warning**         | Establish analytical foundations for real-time DP risk detection |
-
-The project does **not claim realized financial savings or causal operational improvement** from the historical analysis alone.
-
-Its value lies in establishing a framework for improving:
-
-**visibility → anticipation → investigation → response → measurement**
-
----
-
-# How I Tested the Analytical Story
-
-A single analytical technique was not considered sufficient evidence.
-
-Multiple methods were used to examine the operating system from different perspectives.
-
-## Correlation Analysis
-
-Used as an exploratory tool to identify initial relationships between customer DP and operating variables.
-
-It was not treated as sufficient evidence for operational recommendations.
-
----
-
-## Multiple Linear Regression
-
-Used to estimate the independent relationship between operational variables and customer DP while controlling for other observed system conditions.
-
-This was particularly important for understanding the sign reversal observed in Plant 1 loading.
-
----
-
-## Time-Series Diagnostics
-
-Operational telemetry occurs sequentially, meaning observations may not be statistically independent.
-
-Model diagnostics therefore considered time-series behavior.
-
-**Heteroskedasticity and Autocorrelation Consistent (HAC) robust standard errors** were applied to improve statistical inference in the presence of autocorrelation and heteroskedasticity.
-
----
-
-## Interaction Modeling
-
-Interaction terms were tested to determine whether the relationship between one operational variable and customer DP changed under different system conditions.
-
----
-
-## SHAP Explainability
-
-SHAP provided a complementary model-interpretability perspective for examining how variables contributed to model predictions across observations.
-
-Together, these methods provided multiple lenses on the same operational problem:
-
-### **Explore → Quantify → Diagnose → Challenge → Explain**
-
----
-
-# Analytical Boundary
-
-> ## **Statistical association is not automatically physical causation.**
-
-This project identifies statistical relationships, predictive signals, and operational risk indicators within the available historical data.
-
-It does not establish that changing a variable will necessarily produce the corresponding physical response under all operating conditions.
-
-Recommendations involving plant controls should therefore be validated against:
-
-* engineering expertise;
-* equipment operating limits;
-* network constraints;
-* safety requirements;
-* control-system logic; and
-* controlled operational testing
-
-before being converted into automated control actions.
-
-This distinction is especially important when applying analytics to physical infrastructure.
-
----
-
-# From Analytics Project to Operational Capability
-
-The current project explains historical operating behavior and identifies conditions associated with customer DP risk.
-
-The natural next step would be converting these insights into a live decision-support capability.
-
-```mermaid
-flowchart LR
-    A["Historical Data"] --> B["Driver Analysis"]
-    B --> C["Live Monitoring"]
-    C --> D["Risk Detection"]
-    D --> E["Early Warning"]
-    E --> F["Operational Decision"]
-    F --> G["Measure Outcome"]
-    G --> H["Continuous Improvement"]
-```
-
-The long-term analytical loop becomes:
-
-## **Observe → Explain → Anticipate → Act → Measure → Improve**
-
-Potential extensions include:
-
-* automated ingestion of live plant telemetry;
-* weather forecast integration;
-* real-time DP risk scoring;
-* early-warning alerts;
-* intervention tracking;
-* model performance monitoring; and
-* measurement of whether operational interventions actually reduce DP excursions.
-
-This would move the analytical capability from:
-
-**What happened?**
-
-to:
-
-**Why did it happen?**
-
-to:
-
-**What conditions indicate that it may happen again?**
-
-to:
-
-**What action should operations consider?**
-
-and finally:
-
-**Did the intervention improve the outcome?**
-
----
-
-# Tools & Technology
-
-| Capability            | Technology                 |
-| --------------------- | -------------------------- |
-| Programming           | Python                     |
-| Data Analysis         | Pandas, NumPy              |
-| Statistical Modeling  | Statsmodels, Scikit-learn  |
-| Time-Series Inference | HAC Robust Standard Errors |
-| Explainable AI        | SHAP                       |
-| Visualization         | Matplotlib, Seaborn        |
-| Business Intelligence | Power BI                   |
-| Development           | Jupyter Notebook, Git      |
-
----
-
-# Repository Structure
-
-```text
-├── data/
-│   ├── raw/
-│   └── processed/
-│
-├── notebooks/
-│   └── code.ipynb
-│
-├── dashboard/
-│   └── Ops_Dashboard.pbix
-│
-├── presentation_slide/
-│   └── Operational-Investigation-of-Customer-DP.pptx
-│
-├── result_images/
-│
-├── requirements.txt
-└── README.md
-```
-
-**Project Gallery:** [View all project visualizations](./result_images/)
-
----
-
-# Challenges & Lessons Learned
-
-## Confounding Can Change the Business Story
-
-The sign reversal observed for Plant 1 loading demonstrated that relationships seen in isolation can be misleading when multiple operational variables move together.
-
-**Lesson:**
-Do not turn simple correlations directly into operational recommendations.
-
----
-
-## Time-Series Data Requires Different Statistical Thinking
-
-Plant telemetry is sequential and can exhibit autocorrelation.
-
-**Lesson:**
-Statistical inference should account for the structure of operational data rather than assuming every observation is independent.
-
----
-
-## Statistical Significance Is Not the Same as Business Significance
-
-A statistically significant variable is not automatically an important operating lever.
-
-Its importance depends on factors such as:
-
-* effect size;
-* operational controllability;
-* system context;
-* service impact; and
-* engineering constraints.
-
-**Lesson:**
-Model results should be interpreted against the actual business decision, not statistical significance alone.
-
----
-
-## Explainability Matters
-
-A technically strong model has limited operational value if decision-makers cannot understand its behavior.
-
-**Lesson:**
-Model performance and model explainability should be treated as complementary requirements.
-
----
-
-## Analytics Must End With a Decision
-
-The most important question became less about:
-
-> *What does the model say?*
-
-and more about:
-
-> **What decision should this information improve?**
-
-**Lesson:**
-The analytical workflow should connect evidence to a decision and the decision to a measurable outcome.
-
----
-
-# Skills Demonstrated
-
-### Business & Operational Analytics
-
-`Operational Analytics` `Decision Support` `KPI Design` `Root-Cause Investigation` `Operational Monitoring` `Executive Storytelling`
-
-### Data Science & Statistics
-
-`Regression Analysis` `Time-Series Analysis` `Feature Engineering` `Interaction Effects` `Statistical Diagnostics` `HAC Robust Inference` `Explainable AI`
-
-### Business Intelligence
-
-`Power BI` `Executive Dashboards` `KPI Reporting` `Data Visualization` `Insight-to-Action Translation`
-
-### Technology
-
-`Python` `Pandas` `NumPy` `Statsmodels` `Scikit-learn` `SHAP` `Matplotlib` `Seaborn` `Git` `Jupyter`
-
----
-
-# The Takeaway
-
-> ## **Reliable operations require more than knowing that a KPI has failed.**
->
-> Teams need to understand **when risk is developing, what is driving it, what they can control, and whether their intervention worked.**
-
-This project demonstrates an end-to-end approach to operational analytics:
-
-### **Business Problem → Data → Evidence → Explanation → Decision → Action → Measurement**
-
-The technical work — regression, time-series inference, interaction modeling, SHAP, and Power BI — supports that process.
-
-The end goal is not simply to build a model or dashboard.
-
-## **The goal is to help people make better decisions with data.**
-
----
-
-# Contact
-
-Interested in discussing **Operational Analytics, Business Intelligence, Data Analytics, Data Science, or data-driven operations**?
-
-Feel free to connect with me.
+**Core stack:** Python · pandas · statsmodels · scikit-learn · SHAP · Power BI
