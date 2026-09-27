@@ -6,10 +6,4 @@ presentation slide/
 project w
 *.code-workspace
 
-# Private case-study documents (with or without extensions)
-case study
-case study.*
-Case Study roadmap
-Case Study roadmap.*
-Operations Analyst Case Study roadmap
-Operations Analyst Case Study roadmap.*
+# Roadmap.*
